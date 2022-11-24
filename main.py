@@ -15,17 +15,23 @@ class VK:
 
     def _get_photos(self, user_id=None):
         url = 'https://api.vk.com/method/photos.get'
-        params = {
-            'owner_id': user_id,
-            'album_id': 'profile',
-            'extended': 1
-        }
-        response = requests.get(url, params={**self.params, **params})
+        album = ['profile', 'wall']
+
+        for al in album:
+            params = {
+                'owner_id': user_id,
+                'album_id': al,
+                'extended': 1,
+                'feed_type': 'photo',
+            }
+            print(al)
+            response = requests.get(url, params={**self.params, **params})
 
         return response.json()
 
     def _get_name(self, id):
-        dict_photos = self._get_photos(id)
+        self.id = id
+        dict_photos = self._get_photos(self.id)
         name_photos = {}
         date = {}
         check = set()
@@ -69,6 +75,3 @@ if __name__ == '__main__':
     user_id = str(input('Enter id: '))
     vk = VK(access_token, user_id)
     print(vk.upload(user_id))
-
-    #223619447
-    #67288297
