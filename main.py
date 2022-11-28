@@ -1,10 +1,9 @@
-import time
 import requests
 from lib import token
 import upload_yandex
 import json
 from datetime import datetime
-from tqdm import tqdm
+from lib import MyProgressBar
 
 
 class VK:
@@ -49,19 +48,18 @@ class VK:
             else:
                 name_photos[url] = datetime.utcfromtimestamp(int(date[url])).strftime('%Y-%m-%d')
 
-            print('Получение фотографий: ')
-            for i in tqdm(name_photos):
-                time.sleep(.1)
-
         return name_photos
 
     def upload(self, id):
         self.id = id
         dict_name = self._get_name(self.id)
 
+        b3 = MyProgressBar.MyProgressBar(dict_name)
+        b3.oper_text('Upload photos in disc')
         for url, name in dict_name.items():
             ya = upload_yandex.Yandex()
             ya.upload(url, name)
+            b3.Bar()
 
         with open('info.json', 'w') as f:
             step_info = []
@@ -73,8 +71,6 @@ class VK:
                        'size': 'z'
                    }
                 )
-
-
 
             json.dump(step_info, f)
         return 'Загрузка завершена!'
