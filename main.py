@@ -1,8 +1,10 @@
+import time
 import requests
 from lib import token
 import upload_yandex
 import json
 from datetime import datetime
+from tqdm import tqdm
 
 
 class VK:
@@ -47,6 +49,10 @@ class VK:
             else:
                 name_photos[url] = datetime.utcfromtimestamp(int(date[url])).strftime('%Y-%m-%d')
 
+            print('Получение фотографий: ')
+            for i in tqdm(name_photos):
+                time.sleep(.1)
+
         return name_photos
 
     def upload(self, id):
@@ -57,7 +63,7 @@ class VK:
             ya = upload_yandex.Yandex()
             ya.upload(url, name)
 
-        with open('requiremеnts.json', 'w') as f:
+        with open('info.json', 'w') as f:
             step_info = []
             for key, value in dict_name.items():
                 step_info.append(
@@ -67,6 +73,9 @@ class VK:
                        'size': 'z'
                    }
                 )
+
+
+
             json.dump(step_info, f)
         return 'Загрузка завершена!'
 
